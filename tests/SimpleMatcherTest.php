@@ -5,40 +5,41 @@ namespace Kellegous\CodeOwners;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Owners
+ * @covers SimpleMatcher
  */
-class OwnersTest extends TestCase
+class SimpleMatcherTest extends TestCase
 {
     /**
-     * @return iterable<string, array{Owners, string, ?int}>
+     * @return iterable<string, array{SimpleMatcher, string, ?int}>
      * @throws ParseException
      */
     public static function githubExampleTests(): iterable
     {
         $owners = Owners::fromFile(__DIR__ . '/CODEOWNERS.example');
+        $matcher = new SimpleMatcher($owners->getRules());
 
         yield 'example' => [
-            $owners,
+            $matcher,
             'x/y/.js',
             16
         ];
     }
 
     /**
-     * @param Owners $owners
+     * @param SimpleMatcher $matcher
      * @param string $path
      * @param int|null $expected_line
      * @return void
      * @dataProvider githubExampleTests
      */
     public function testGithubExample(
-        Owners $owners,
+        SimpleMatcher $matcher,
         string $path,
         ?int $expected_line
     ): void {
-        $rule = $owners->match($path);
+        $rule = $matcher->match($path);
         $line = $rule !== null
-            ? $rule->getPattern()->getSourceInfo()->getLineNumber()
+            ? $rule->getSourceInfo()->getLineNumber()
             : null;
         self::assertSame($expected_line, $line);
     }

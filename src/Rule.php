@@ -16,16 +16,20 @@ final class Rule
      */
     private array $owners;
 
+    private SourceInfo $sourceInfo;
+
     /**
      * @param Pattern $pattern
      * @param string[] $owners
      */
     public function __construct(
         Pattern $pattern,
-        array $owners
+        array $owners,
+        SourceInfo $sourceInfo
     ) {
         $this->pattern = $pattern;
         $this->owners = $owners;
+        $this->sourceInfo = $sourceInfo;
     }
 
     public static function parse(
@@ -40,18 +44,10 @@ final class Rule
         }
         $pattern = array_shift($parts);
         return new self(
-            Pattern::parse($pattern, $sourceInfo),
-            $parts
+            Pattern::parse($pattern),
+            $parts,
+            $sourceInfo
         );
-    }
-
-    /**
-     * @param string $path
-     * @return bool
-     */
-    public function matches(string $path): bool
-    {
-        return $this->pattern->matches($path);
     }
 
     /**
@@ -68,5 +64,13 @@ final class Rule
     public function getOwners(): array
     {
         return $this->owners;
+    }
+
+    /**
+     * @return SourceInfo
+     */
+    public function getSourceInfo(): SourceInfo
+    {
+        return $this->sourceInfo;
     }
 }

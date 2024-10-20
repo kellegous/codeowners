@@ -19,7 +19,7 @@ final class Owners
     private function __construct(
         array $rules
     ) {
-        $this->rules = array_reverse($rules);
+        $this->rules = $rules;
     }
 
     /**
@@ -111,13 +111,11 @@ final class Owners
         return new self($rules);
     }
 
-    public function match(string $path): ?Rule
+    /**
+     * @return Rule[]
+     */
+    public function getRules(): array
     {
-        foreach ($this->rules as $rule) {
-            if ($rule->matches($path)) {
-                return $rule;
-            }
-        }
-        return null;
+        return $this->rules;
     }
 }

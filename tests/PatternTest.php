@@ -12,17 +12,12 @@ class PatternTest extends TestCase
     /**
      * @return iterable<string, array{string, string, bool}>
      */
-    public static function getHmarrTests(): iterable
+    public static function getPatternMatchTests(): iterable
     {
-        $contents = file_get_contents(__DIR__ . '/patterns.json');
-        if ($contents === false) {
-            throw new \RuntimeException('failed to read patterns.json');
-        }
-
-        $tests = json_decode($contents, true);
-        if (!is_array($tests)) {
-            throw new \RuntimeException('failed to decode patterns.json');
-        }
+        $tests = array_merge(
+            self::testsFrom(__DIR__ . '/patterns.json'),
+            self::testsFrom(__DIR__ . '/new-patterns.json')
+        );
 
         foreach ($tests as ['name' => $name, 'pattern' => $pattern, 'paths' => $paths]) {
             foreach ($paths as $path => $expected) {
@@ -36,18 +31,42 @@ class PatternTest extends TestCase
     }
 
     /**
+     * @param string $filename
+     * @return array{name:string, pattern:string, paths:array<string,bool>}[]
+     */
+    private static function testsFrom(string $filename): array
+    {
+        $contents = file_get_contents($filename);
+        if ($contents === false) {
+            throw new \RuntimeException('failed to read patterns.json');
+        }
+
+        $tests = json_decode($contents, true);
+        if (!is_array($tests)) {
+            throw new \RuntimeException('failed to decode patterns.json');
+        }
+
+        return $tests;
+    }
+
+    /**
      * @param string $pattern
      * @param string $path
      * @param bool $expected
      * @return void
-     * @dataProvider getHmarrTests
+     * @dataProvider getPatternMatchTests
+     * @throws ParseException
      */
-    public function testHmarrCases(
+    public function testPatternMatch(
         string $pattern,
         string $path,
         bool $expected
     ): void {
-        $pattern = Pattern::parse($pattern, new SourceInfo(1));
-        $this->assertSame($expected, $pattern->matches($path));
+        $pattern = Pattern::parse($pattern);
+        $matcher = $pattern->getMatcher();
+        $this->assertSame(
+            $expected,
+            $matcher($path)
+        );
     }
 }
