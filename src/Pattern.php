@@ -4,38 +4,51 @@ declare(strict_types=1);
 
 namespace Kellegous\CodeOwners;
 
-use RuntimeException;
+use Closure;
 
 final class Pattern
 {
+    /**
+     * @var string
+     */
     private string $pattern;
 
-    private string $regexp;
-
-    private SourceInfo $sourceInfo;
-
-    public function __construct(
-        string $pattern,
-        string $regexp,
-        SourceInfo $sourceInfo
-    ) {
+    private function __construct(string $pattern)
+    {
         $this->pattern = $pattern;
-        $this->regexp = $regexp;
-        $this->sourceInfo = $sourceInfo;
     }
 
-    public static function parse(
-        string $pattern,
-        SourceInfo $sourceInfo
-    ): self {
-        return new self($pattern, self::toRegexp($pattern), $sourceInfo);
+    public static function parse(string $pattern): self
+    {
+        if (strpos($pattern, '***') !== false || $pattern === '') {
+            throw new ParseException("Invalid pattern: $pattern");
+        }
+        return new self($pattern);
+    }
+
+    public function toString(): string
+    {
+        return $this->pattern;
+    }
+
+    /**
+     * @return Closure(string):bool
+     */
+    public function getMatcher(): Closure
+    {
+        $regexp = self::toRegexp($this->pattern);
+        return function (string $path) use ($regexp): bool {
+            $m = preg_match($regexp, $path);
+            if ($m === false) {
+                throw new \RuntimeException('Failed to match pattern');
+            }
+            return $m === 1;
+        };
     }
 
     private static function toRegexp(string $pattern): string
     {
-        if (strpos($pattern, '***') !== false || $pattern === '') {
-            throw new ParseException("Invalid pattern: $pattern");
-        } elseif ($pattern === '/') {
+        if ($pattern === '/') {
             return '/\A\Z/';
         }
 
@@ -116,29 +129,5 @@ final class Pattern
         }
         $buffer .= '\Z';
         return "#$buffer#";
-    }
-
-    public function matches(string $path): bool
-    {
-        $m = preg_match($this->regexp, $path);
-        if ($m === false) {
-            throw new RuntimeException("match error: {$this->regexp}");
-        }
-        return $m === 1;
-    }
-
-    public function getPattern(): string
-    {
-        return $this->pattern;
-    }
-
-    public function getRegexp(): string
-    {
-        return $this->regexp;
-    }
-
-    public function getSourceInfo(): SourceInfo
-    {
-        return $this->sourceInfo;
     }
 }
