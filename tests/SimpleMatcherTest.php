@@ -10,6 +10,39 @@ use PHPUnit\Framework\TestCase;
 class SimpleMatcherTest extends TestCase
 {
     /**
+     * @return iterable<array{SimpleMatcher, string, ?int}>
+     * @throws ParseException
+     */
+    public static function matchTests(): iterable
+    {
+        $tests = include __DIR__ . '/matcher_tests.php';
+        foreach ($tests as $desc => ['lines' => $lines, 'expected' => $expected]) {
+            $matcher = self::matcherWith($lines);
+            foreach ($expected as $path => $line) {
+                yield "{$desc} w/ {$path}" => [
+                    $matcher,
+                    $path,
+                    $line
+                ];
+            }
+        }
+    }
+
+    /**
+     * @param string[] $lines
+     * @return SimpleMatcher
+     * @throws ParseException
+     */
+    private static function matcherWith(array $lines): SimpleMatcher
+    {
+        return new SimpleMatcher(
+            Owners::fromString(
+                implode(PHP_EOL, $lines)
+            )->getRules()
+        );
+    }
+
+    /**
      * @return iterable<string, array{SimpleMatcher, string, ?int}>
      * @throws ParseException
      */
@@ -33,6 +66,26 @@ class SimpleMatcherTest extends TestCase
      * @dataProvider githubExampleTests
      */
     public function testGithubExample(
+        SimpleMatcher $matcher,
+        string $path,
+        ?int $expected_line
+    ): void {
+        $rule = $matcher->match($path);
+        $line = $rule !== null
+            ? $rule->getSourceInfo()->getLineNumber()
+            : null;
+        self::assertSame($expected_line, $line);
+    }
+
+    /**
+     * @param SimpleMatcher $matcher
+     * @param string $path
+     * @param int|null $expected_line
+     * @return void
+     *
+     * @dataProvider matchTests
+     */
+    public function testMatch(
         SimpleMatcher $matcher,
         string $path,
         ?int $expected_line
