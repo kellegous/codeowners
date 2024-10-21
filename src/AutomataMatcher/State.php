@@ -17,7 +17,12 @@ final class State implements JsonSerializable
     /**
      * @var bool
      */
-    private bool $isRecursive = false;
+    private bool $isRecursive;
+
+    public function __construct(bool $isRecursive = false)
+    {
+        $this->isRecursive = $isRecursive;
+    }
 
     /**
      * @param Token[] $tokens
@@ -33,10 +38,11 @@ final class State implements JsonSerializable
         }
 
         $token = array_shift($tokens);
+        $pattern = $token->getPattern();
 
-        if ($token->getPattern() === '**') {
-            $this->isRecursive = true;
-            $state = $this;
+        if ($pattern === '**' || $pattern == '***') {
+            $state = $this->edges['**'] ?? new State(true);
+            $this->edges['**'] = $state;
         } else {
             $regex = $token->getRegex();
             $state = $this->edges[$regex] ?? new State();
@@ -45,6 +51,9 @@ final class State implements JsonSerializable
 
         if (empty($tokens)) {
             $state->priority = max($priority, $state->priority);
+            if ($pattern === '***') {
+                $this->priority = max($priority, $this->priority);
+            }
         } else {
             $state->addTokens($tokens, $priority);
         }
@@ -61,6 +70,12 @@ final class State implements JsonSerializable
         }
 
         $priority = -1;
+
+        $all = $this->edges['**'] ?? null;
+        if ($all !== null) {
+            $priority = max($all->match($path), $priority);
+        }
+
         $local = array_shift($path);
         foreach ($this->edges as $regex => $state) {
             if (preg_match($regex, $local)) {

@@ -51,24 +51,23 @@ final class AutomataMatcher implements RuleMatcher
         $tokens = [];
         $pattern = $pattern->toString();
 
+        $original = $pattern;
+
         if (!str_starts_with($pattern, '/')) {
             $pattern = '**/' . $pattern;
         }
 
         if (str_ends_with($pattern, '/')) {
-            $pattern .= '*/**';
-        } elseif (!str_ends_with($pattern, '/*')) {
-            $pattern .= '/**';
+            $pattern .= '**';
+        } elseif (!str_ends_with($pattern, '/**') && !str_ends_with($pattern, '/*')) {
+            $pattern .= '/***';
         }
 
         $segments = explode('/', trim($pattern, '/'));
+
         foreach ($segments as $i => $segment) {
             if ($segment === '*' || $segment === '**') {
-                $tokens[] = new Token(
-                    $segment,
-                    '#\A.*\Z#',
-                    false,
-                );
+                $tokens[] = new Token($segment, '#\A.*\Z#');
                 continue;
             }
 
@@ -84,7 +83,6 @@ final class AutomataMatcher implements RuleMatcher
     private static function parseToken(
         string $segment
     ): Token {
-        $isLiteral = true;
         $buffer = '\A';
         $escape = false;
         for ($i = 0, $n = strlen($segment); $i < $n; $i++) {
@@ -99,11 +97,9 @@ final class AutomataMatcher implements RuleMatcher
                     $escape = true;
                     break;
                 case '*':
-                    $isLiteral = false;
                     $buffer .= '.*';
                     break;
                 case '?':
-                    $isLiteral = false;
                     $buffer .= '.';
                     break;
                 default:
@@ -112,7 +108,7 @@ final class AutomataMatcher implements RuleMatcher
             }
         }
         $buffer .= '\Z';
-        return new Token($segment, "#$buffer#", $isLiteral);
+        return new Token($segment, "#$buffer#");
     }
 
     /**
