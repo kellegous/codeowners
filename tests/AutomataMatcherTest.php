@@ -26,53 +26,6 @@ final class AutomataMatcherTest extends TestCase
                 ];
             }
         }
-
-//        yield from self::createTest(
-//            'wildcard overlap w/ literal',
-//            ['/a', '/a/d'],
-//            [
-//                'a/x/d' => 1,
-//                'a/d' => 2,
-//                'a' => 1,
-//            ]
-//        );
-//
-//        yield from self::createTest(
-//            '/a*',
-//            ['/a*'],
-//            [
-//                'b/a' => null,
-//                'a' => 1,
-//                'a1' => 1,
-//                'a2/b' => 1,
-//                'a2/c/d' => 1,
-//            ]
-//        );
-//
-//        yield from self::createTest(
-//            '/*a',
-//            ['/*a'],
-//            [
-//                'b/a' => null,
-//                'a' => 1,
-//                '1a' => 1,
-//                '2a/b' => 1,
-//                '2a/b/c' => 1,
-//            ]
-//        );
-//
-//        yield from self::createTest(
-//            '*/',
-//            ['*/'],
-//            [
-//                'a' => null,
-//                'b/c' => 1,
-//                'b/d/e' => 1,
-//                'c/a' => 1,
-//                'c/b/c' => 1,
-//                'c/b/d/e' => 1,
-//            ]
-//        );
     }
 
     /**
@@ -88,21 +41,6 @@ final class AutomataMatcherTest extends TestCase
             )->getRules()
         );
     }
-
-//    private static function createTest(
-//        string $description,
-//        array $lines,
-//        array $paths
-//    ): iterable {
-//        $matcher = self::matcherWith($lines);
-//        foreach ($paths as $path => $expected) {
-//            yield "{$description} w/ {$path}" => [
-//                $matcher,
-//                $path,
-//                $expected
-//            ];
-//        }
-//    }
 
     /**
      * @param AutomataMatcher $matcher
