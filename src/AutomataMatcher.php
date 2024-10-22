@@ -51,8 +51,6 @@ final class AutomataMatcher implements RuleMatcher
         $tokens = [];
         $pattern = $pattern->toString();
 
-        $original = $pattern;
-
         if (!str_starts_with($pattern, '/')) {
             $pattern = '**/' . $pattern;
         }
@@ -130,5 +128,33 @@ final class AutomataMatcher implements RuleMatcher
     public function asJson(): array
     {
         return $this->start->jsonSerialize();
+    }
+
+    /**
+     * @return array{nodes: array<string, int>, edges: array{from: string, to: string, label: string}[]}
+     */
+    public function getDebugInfo(): array
+    {
+        $patterns = [];
+        foreach ($this->rules as $rule) {
+            foreach (self::parsePattern($rule->getPattern()) as $token) {
+                $patterns[$token->getRegex()] = $token->getPattern();
+            }
+        }
+
+        $nodes = [];
+        $edges = [];
+        $this->start->getDebugInfo($nodes, $edges);
+        $edges = array_map(
+            function (array $edge) use ($patterns): array {
+                ['from' => $from, 'to' => $to, 'label' => $label] = $edge;
+                if ($label !== '**') {
+                    $label = $patterns[$label] ?? '??';
+                }
+                return ['from' => $from, 'to' => $to, 'label' => $label];
+            },
+            $edges
+        );
+        return ['nodes' => $nodes, 'edges' => $edges];
     }
 }
