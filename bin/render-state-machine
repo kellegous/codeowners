@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Kellegous\CodeOwners\AutomataMatcher;
+use Kellegous\CodeOwners\AutomataMatcher\DotRenderer;
+use Kellegous\CodeOwners\Owners;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+if ($argc !== 2) {
+    fprintf(STDERR, "Usage: %s <filename>\n", $argv[0]);
+    exit(1);
+}
+
+$matcher = AutomataMatcher::build(
+    Owners::fromFile($argv[1])->getRules()
+);
+
+printf("%s\n", DotRenderer::render($matcher));

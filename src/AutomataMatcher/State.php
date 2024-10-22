@@ -2,11 +2,14 @@
 
 namespace Kellegous\CodeOwners\AutomataMatcher;
 
-use http\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use JsonSerializable;
 
 final class State implements JsonSerializable
 {
+    /**
+     * @var int
+     */
     private int $priority = -1;
 
     /**
@@ -19,6 +22,9 @@ final class State implements JsonSerializable
      */
     private bool $isRecursive;
 
+    /**
+     * @param bool $isRecursive
+     */
     public function __construct(bool $isRecursive = false)
     {
         $this->isRecursive = $isRecursive;
@@ -98,5 +104,32 @@ final class State implements JsonSerializable
             'edges' => $this->edges,
             '**' => $this->isRecursive,
         ];
+    }
+
+    /**
+     * @param array<string, int> $nodes
+     * @param array{from:int, to: int, label:string}[] $edges
+     * @return void
+     */
+    public function getDebugInfo(
+        array &$nodes,
+        array &$edges
+    ): void {
+        $nodes[spl_object_id($this)] = $this->priority;
+        foreach ($this->edges as $regex => $state) {
+            $edges[] = [
+                'from' => spl_object_id($this),
+                'to' => spl_object_id($state),
+                'label' => $regex,
+            ];
+            $state->getDebugInfo($nodes, $edges);
+        }
+        if ($this->isRecursive) {
+            $edges[] = [
+                'from' => spl_object_id($this),
+                'to' => spl_object_id($this),
+                'label' => '**',
+            ];
+        }
     }
 }
