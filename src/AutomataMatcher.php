@@ -27,19 +27,21 @@ final class AutomataMatcher implements RuleMatcher
     }
 
     /**
-     * @param Rule[] $rules
+     * @param iterable<Rule> $rules
      * @return self
      */
-    public static function build(array $rules): self
+    public static function build(iterable $rules): self
     {
         $start = new State();
+        $as_array = [];
         foreach ($rules as $index => $rule) {
             $start->addTokens(
                 self::parsePattern($rule->getPattern()),
                 $index
             );
+            $as_array[] = $rule;
         }
-        return new self($rules, $start);
+        return new self($as_array, $start);
     }
 
     /**
@@ -123,15 +125,9 @@ final class AutomataMatcher implements RuleMatcher
     }
 
     /**
-     * @return array{priority: int, edges: array<string, State>, "**": bool}
-     */
-    public function asJson(): array
-    {
-        return $this->start->jsonSerialize();
-    }
-
-    /**
      * @return array{nodes: array<string, int>, edges: array{from: string, to: string, label: string}[]}
+     *
+     * @internal
      */
     public function getDebugInfo(): array
     {

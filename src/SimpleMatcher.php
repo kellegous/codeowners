@@ -12,14 +12,14 @@ final class SimpleMatcher implements RuleMatcher
     private array $rules;
 
     /**
-     * @param Rule[] $rules
+     * @param iterable<Rule> $rules
      */
-    public function __construct(array $rules)
+    public function __construct(iterable $rules)
     {
-        $matchers = array_map(
-            fn(Rule $rule) => [$rule->getPattern()->getMatcher(), $rule],
-            $rules
-        );
+        $matchers = [];
+        foreach ($rules as $rule) {
+            $matchers[] = [$rule->getPattern()->getMatcher(), $rule];
+        }
         $this->rules = array_reverse($matchers);
     }
 

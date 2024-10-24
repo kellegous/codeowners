@@ -39,10 +39,18 @@ $rule = $matcher->match($relative_path);
 
 ## TODO
 
-- [ ] Add comments to the structure
+- [x] Add comments to the structure
 - [ ] Complete phpdocs
 - [ ] Add error checking on `match` to normalize or reject impossible patterns (i.e. "" and "/...")
 - [ ] Explain how `AutomataMatcher` works in this file.
+- [x] Should I support whitespace escaping in patterns?
+- [x] Add ability to turn `Owners` into string.
+- [ ] Test owners entries.
+- [ ] Test entries to string.
+- [ ] Test pattern escaping.
+- [ ] Test no-owners rules
+- [x] Remove ext-json from requires.
+- [x] Add ext-ctype to requires.
 
 ## Author(s)
 

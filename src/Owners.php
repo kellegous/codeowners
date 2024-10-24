@@ -9,17 +9,17 @@ use Iterator;
 final class Owners
 {
     /**
-     * @var Rule[]
+     * @var Entry[]
      */
-    private array $rules;
+    private array $entries;
 
     /**
-     * @param Rule[] $rules
+     * @param Entry[] $entries
      */
     private function __construct(
-        array $rules
+        array $entries
     ) {
-        $this->rules = $rules;
+        $this->entries = $entries;
     }
 
     /**
@@ -29,46 +29,63 @@ final class Owners
      */
     public static function fromFile(string $filename): self
     {
-        $rules = iterator_to_array(
-            self::rulesFrom(
+        $entries = iterator_to_array(
+            self::entriesFrom(
                 self::readLinesFrom($filename),
                 $filename
             )
         );
-
-        return new self($rules);
+        return new self($entries);
     }
 
     /**
      * @param iterable<int, string> $iter
      * @param string|null $filename
-     * @return Iterator<Rule>
+     * @return Iterator<Entry>
      * @throws ParseException
      */
-    private static function rulesFrom(
+    private static function entriesFrom(
         iterable $iter,
         ?string $filename
     ): Iterator {
         foreach ($iter as $index => $line) {
-            $line = self::stripComment($line);
-            if ($line === '') {
-                continue;
-            }
-
-            yield Rule::parse(
+            yield self::parseEntry(
                 $line,
                 new SourceInfo($index + 1, $filename)
             );
         }
     }
 
-    private static function stripComment(string $line): string
-    {
+    /**
+     * @param string $line
+     * @param SourceInfo $sourceInfo
+     * @return Entry
+     * @throws ParseException
+     */
+    private static function parseEntry(
+        string $line,
+        SourceInfo $sourceInfo
+    ): Entry {
         $comment_start = strpos($line, '#');
         if ($comment_start === false) {
-            return $line;
+            $content = trim($line);
+            $comment = '';
+        } else {
+            $content = trim(substr($line, 0, $comment_start));
+            $comment = trim(substr($line, $comment_start + 1));
         }
-        return trim(substr($line, 0, $comment_start));
+
+        if ($content === '' && $comment === '') {
+            return new Blank($sourceInfo);
+        } elseif ($content === '' && $comment !== '') {
+            return new Comment($content, $sourceInfo);
+        }
+
+        return Rule::parse(
+            $content,
+            $sourceInfo,
+            $comment === '' ? null : $comment
+        );
     }
 
     /**
@@ -101,21 +118,33 @@ final class Owners
         string $content,
         ?string $filename = null
     ): self {
-        $rules = iterator_to_array(
-            self::rulesFrom(
+        $entries = iterator_to_array(
+            self::entriesFrom(
                 explode(PHP_EOL, $content),
                 $filename
             )
         );
 
-        return new self($rules);
+        return new self($entries);
     }
 
     /**
-     * @return Rule[]
+     * @return iterable<Rule>
      */
-    public function getRules(): array
+    public function getRules(): iterable
     {
-        return $this->rules;
+        foreach ($this->entries as $entry) {
+            if ($entry instanceof Rule) {
+                yield $entry;
+            }
+        }
+    }
+
+    /**
+     * @return iterable<Entry>
+     */
+    public function getEntries(): iterable
+    {
+        return $this->entries;
     }
 }
