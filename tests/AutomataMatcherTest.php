@@ -13,7 +13,7 @@ final class AutomataMatcherTest extends TestCase
      * @return iterable<array{AutomataMatcher, string, ?int}>
      * @throws ParseException
      */
-    public static function matchTests(): iterable
+    public static function getMatchTests(): iterable
     {
         $tests = include __DIR__ . '/matcher_tests.php';
         foreach ($tests as $desc => ['lines' => $lines, 'expected' => $expected]) {
@@ -48,7 +48,7 @@ final class AutomataMatcherTest extends TestCase
      * @param int|null $expected_line
      * @return void
      *
-     * @dataProvider matchTests
+     * @dataProvider getMatchTests
      */
     public function testMatch(
         AutomataMatcher $matcher,

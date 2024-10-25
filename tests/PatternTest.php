@@ -14,39 +14,16 @@ class PatternTest extends TestCase
      */
     public static function getPatternMatchTests(): iterable
     {
-        $tests = array_merge(
-            self::testsFrom(__DIR__ . '/patterns.json'),
-            self::testsFrom(__DIR__ . '/new-patterns.json')
-        );
-
-        foreach ($tests as ['name' => $name, 'pattern' => $pattern, 'paths' => $paths]) {
+        $tests = include __DIR__ . '/pattern_tests.php';
+        foreach ($tests as $desc => ['pattern' => $pattern, 'paths' => $paths]) {
             foreach ($paths as $path => $expected) {
-                yield "{$name} w/ path {$path}" => [
+                yield "{$desc} w/ {$path}" => [
                     $pattern,
                     $path,
                     $expected,
                 ];
             }
         }
-    }
-
-    /**
-     * @param string $filename
-     * @return array{name:string, pattern:string, paths:array<string,bool>}[]
-     */
-    private static function testsFrom(string $filename): array
-    {
-        $contents = file_get_contents($filename);
-        if ($contents === false) {
-            throw new \RuntimeException('failed to read patterns.json');
-        }
-
-        $tests = json_decode($contents, true);
-        if (!is_array($tests)) {
-            throw new \RuntimeException('failed to decode patterns.json');
-        }
-
-        return $tests;
     }
 
     /**
