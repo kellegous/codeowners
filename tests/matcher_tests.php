@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'wildcard overlap w/ literal' => [
         'lines' => ['/a', '/a/d'],
