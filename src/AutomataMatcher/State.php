@@ -3,9 +3,8 @@
 namespace Kellegous\CodeOwners\AutomataMatcher;
 
 use InvalidArgumentException;
-use JsonSerializable;
 
-final class State implements JsonSerializable
+final class State
 {
     /**
      * @var int
@@ -95,21 +94,11 @@ final class State implements JsonSerializable
     }
 
     /**
-     * @return array{priority: int, edges: array<string, State>, "**": bool}
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'priority' => $this->priority,
-            'edges' => $this->edges,
-            '**' => $this->isRecursive,
-        ];
-    }
-
-    /**
      * @param array<string, int> $nodes
      * @param array{from:int, to: int, label:string}[] $edges
      * @return void
+     *
+     * @internal
      */
     public function getDebugInfo(
         array &$nodes,

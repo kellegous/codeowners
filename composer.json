@@ -16,7 +16,7 @@
   ],
   "require": {
     "php": ">=7.4",
-    "ext-json": "*",
+    "ext-ctype": "*",
     "symfony/polyfill-php80": "^1.31"
   },
   "require-dev": {
