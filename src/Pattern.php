@@ -65,6 +65,7 @@ final class Pattern
             $segments[count($segments) - 1] = '**';
         }
 
+
         $last_seg_index = count($segments) - 1;
         $need_slash = false;
         $buffer = '\A';

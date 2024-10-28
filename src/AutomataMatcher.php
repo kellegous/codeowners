@@ -53,7 +53,7 @@ final class AutomataMatcher implements RuleMatcher
         $tokens = [];
         $pattern = $pattern->toString();
 
-        if (!str_starts_with($pattern, '/')) {
+        if (!self::isAbsolute($pattern) && !str_starts_with($pattern, '**/')) {
             $pattern = '**/' . $pattern;
         }
 
@@ -74,6 +74,26 @@ final class AutomataMatcher implements RuleMatcher
             $tokens[] = self::parseToken($segment);
         }
         return $tokens;
+    }
+
+    private static function isAbsolute(string $pattern): bool
+    {
+        $ix = strpos($pattern, '/');
+        if ($ix === false) {
+            return false;
+        }
+
+        if ($ix === 0) {
+            return true;
+        }
+
+        for ($i = $ix, $n = strlen($pattern); $i < $n; $i++) {
+            if ($pattern[$i] === '*' || $pattern[$i] === '?') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

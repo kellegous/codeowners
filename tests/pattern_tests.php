@@ -412,4 +412,34 @@ return [
             "c/b/d/e" => true,
         ],
     ],
+    "**/a" => [
+        "pattern" => "**/a",
+        "paths" => [
+            "a" => true,
+            "a/c" => true,
+            "a/d/e" => true,
+            "e/d/a" => true,
+        ],
+    ],
+    "a/**" => [
+        "pattern" => "a/**",
+        "paths" => [
+            "a" => false,
+            "a/b" => true,
+            "a/c/d" => true,
+            "b/a" => false,
+            "b/c/a" => false,
+        ],
+    ],
+
+    "a/**/b" => [
+        "pattern" => "a/**/b",
+        "paths" => [
+            "a/b" => true,
+            "a/x/b" => true,
+            "a/y/b/c" => true,
+            "x/a/b" => false,
+            "x/a/x/b" => false,
+        ],
+    ],
 ];

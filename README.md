@@ -51,6 +51,7 @@ $rule = $matcher->match($relative_path);
 - [ ] Test no-owners rules
 - [x] Remove ext-json from requires.
 - [x] Add ext-ctype to requires.
+- [x] Convert json tests to PHP arrays.
 
 ## Author(s)
 

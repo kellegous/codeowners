@@ -43,19 +43,21 @@ class SimpleMatcherTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{SimpleMatcher, string, ?int}>
+     * @return iterable<array{SimpleMatcher, string, ?int}>
      * @throws ParseException
      */
-    public static function githubExampleTests(): iterable
+    public static function getExampleTests(): iterable
     {
         $owners = Owners::fromFile(__DIR__ . '/CODEOWNERS.example');
         $matcher = new SimpleMatcher($owners->getRules());
-
-        yield 'example' => [
-            $matcher,
-            'x/y/.js',
-            16
-        ];
+        $tests = include __DIR__ . '/example_tests.php';
+        foreach ($tests as $path => $line) {
+            yield $path => [
+                $matcher,
+                $path,
+                $line
+            ];
+        }
     }
 
     /**
@@ -63,9 +65,10 @@ class SimpleMatcherTest extends TestCase
      * @param string $path
      * @param int|null $expected_line
      * @return void
-     * @dataProvider githubExampleTests
+     *
+     * @dataProvider getMatchTests
      */
-    public function testGithubExample(
+    public function testMatch(
         SimpleMatcher $matcher,
         string $path,
         ?int $expected_line
@@ -83,9 +86,9 @@ class SimpleMatcherTest extends TestCase
      * @param int|null $expected_line
      * @return void
      *
-     * @dataProvider getMatchTests
+     * @dataProvider getExampleTests
      */
-    public function testMatch(
+    public function testExampleMatch(
         SimpleMatcher $matcher,
         string $path,
         ?int $expected_line
