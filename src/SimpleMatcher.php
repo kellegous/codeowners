@@ -4,6 +4,11 @@ namespace Kellegous\CodeOwners;
 
 use Closure;
 
+/**
+ * SimpleMatcher does a linear search of the rules present in the code owners
+ * file. This is a simpler matcher that uses less memory but is slower than an
+ * AutomatonMatcher..
+ */
 final class SimpleMatcher implements RuleMatcher
 {
     /**
@@ -24,6 +29,7 @@ final class SimpleMatcher implements RuleMatcher
     }
 
     /**
+     * @inerhitDoc
      * @param string $path
      * @return Rule|null
      */

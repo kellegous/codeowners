@@ -40,7 +40,7 @@ $rule = $matcher->match($relative_path);
 ## TODO
 
 - [x] Add comments to the structure
-- [ ] Complete phpdocs
+- [x] Complete phpdocs
 - [ ] Add error checking on `match` to normalize or reject impossible patterns (i.e. "" and "/...")
 - [ ] Explain how `AutomataMatcher` works in this file.
 - [x] Should I support whitespace escaping in patterns?
@@ -52,6 +52,7 @@ $rule = $matcher->match($relative_path);
 - [x] Remove ext-json from requires.
 - [x] Add ext-ctype to requires.
 - [x] Convert json tests to PHP arrays.
+- [ ] Add a command line tool for dot-renderer
 
 ## Author(s)
 

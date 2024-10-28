@@ -6,6 +6,9 @@ namespace Kellegous\CodeOwners;
 
 use Iterator;
 
+/**
+ * Represents the contents of a code owners file.
+ */
 final class Owners
 {
     /**
@@ -23,6 +26,8 @@ final class Owners
     }
 
     /**
+     * Parse the contents of a code owners file.
+     *
      * @param string $filename
      * @return self
      * @throws ParseException
@@ -109,6 +114,8 @@ final class Owners
     }
 
     /**
+     * Parse the contents of a code owners file as a string.
+     *
      * @param string $content
      * @param string|null $filename
      * @return self
@@ -129,6 +136,9 @@ final class Owners
     }
 
     /**
+     * Get only the rules that are present in the code owners structure. This omits
+     * blank lines and comments.
+     *
      * @return iterable<Rule>
      */
     public function getRules(): iterable
@@ -141,6 +151,8 @@ final class Owners
     }
 
     /**
+     * Get all entries from the code owners file.
+     *
      * @return iterable<Entry>
      */
     public function getEntries(): iterable

@@ -4,12 +4,26 @@ declare(strict_types=1);
 
 namespace Kellegous\CodeOwners;
 
+/**
+ * Represents a comment in the code owners file.
+ */
 final class Comment implements Entry
 {
+    /**
+     * The text of the comment including the leading `#`.
+     * @var string
+     */
     private string $text;
 
+    /**
+     * @var SourceInfo
+     */
     private SourceInfo $sourceInfo;
 
+    /**
+     * @param string $text
+     * @param SourceInfo $sourceInfo
+     */
     public function __construct(
         string $text,
         SourceInfo $sourceInfo
@@ -19,6 +33,7 @@ final class Comment implements Entry
     }
 
     /**
+     * @inheritDoc
      * @Override
      * @return SourceInfo
      */
@@ -28,6 +43,7 @@ final class Comment implements Entry
     }
 
     /**
+     * #inheritDoc
      * @Override
      * @return string
      */

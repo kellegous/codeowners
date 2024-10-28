@@ -4,9 +4,16 @@ namespace Kellegous\CodeOwners\AutomataMatcher;
 
 use Kellegous\CodeOwners\AutomataMatcher;
 
+/**
+ * Intended for debugging, this class will emit a graphviz dot file to visualize
+ * the state machine used to match patterns in an AutomataMatcher.
+ */
 final class DotRenderer
 {
     /**
+     * Generate a graphviz dot file from the given AutomataMatcher. This can be
+     * rendered using the dot command.
+     *
      * @param AutomataMatcher $matcher
      * @return string
      */
