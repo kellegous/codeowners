@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Kellegous\CodeOwners;
 
-
+/**
+ * Represents a rule in the code owners file. A rule consists of a pattern, a list of zero or more
+ * owners and an optional trailing comment.
+ */
 final class Rule implements Entry
 {
     /**
@@ -17,8 +20,14 @@ final class Rule implements Entry
      */
     private array $owners;
 
+    /**
+     * @var SourceInfo
+     */
     private SourceInfo $sourceInfo;
 
+    /**
+     * @var string|null
+     */
     private ?string $comment;
 
     /**
@@ -39,6 +48,15 @@ final class Rule implements Entry
         $this->comment = $comment;
     }
 
+    /**
+     * Parse a rule from a line in the code owners file.
+     *
+     * @param string $line
+     * @param SourceInfo $sourceInfo
+     * @param string|null $comment
+     * @return Rule
+     * @throws ParseException
+     */
     public static function parse(
         string $line,
         SourceInfo $sourceInfo,
@@ -95,6 +113,8 @@ final class Rule implements Entry
     }
 
     /**
+     * Get the pattern for the rule.
+     *
      * @return Pattern
      */
     public function getPattern(): Pattern
@@ -103,6 +123,8 @@ final class Rule implements Entry
     }
 
     /**
+     * Get the owners for the rule.
+     *
      * @return string[]
      */
     public function getOwners(): array
@@ -110,6 +132,11 @@ final class Rule implements Entry
         return $this->owners;
     }
 
+    /**
+     * Get the trailing comment, if any. The comment will include the leading `#` character.
+     *
+     * @return string|null
+     */
     public function getComment(): ?string
     {
         return $this->comment;

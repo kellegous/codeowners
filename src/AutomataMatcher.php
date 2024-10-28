@@ -5,11 +5,23 @@ namespace Kellegous\CodeOwners;
 use Kellegous\CodeOwners\AutomataMatcher\State;
 use Kellegous\CodeOwners\AutomataMatcher\Token;
 
+/**
+ * A RuleMatcher that combines all the patterns into a single automata.
+ */
 final class AutomataMatcher implements RuleMatcher
 {
+    /**
+     * This is the start state for the automata.
+     *
+     * @var State
+     */
     private State $start;
 
     /**
+     * The full collection of rules from the Owners instance. The NFA keeps the index of
+     * rules instead of a reference to the rules themselves since the index provides a straight-forward
+     * way to honor the last-match-wins rule (the largest of the matching indexes wins).
+     *
      * @var Rule[]
      */
     private array $rules;
@@ -27,6 +39,8 @@ final class AutomataMatcher implements RuleMatcher
     }
 
     /**
+     * Builds a new AutomataMatcher from the given rules.
+     *
      * @param iterable<Rule> $rules
      * @return self
      */
@@ -76,6 +90,14 @@ final class AutomataMatcher implements RuleMatcher
         return $tokens;
     }
 
+    /**
+     * Strangely, a pattern is absolute not only if it starts with a slash,
+     * but also if it contains a wildcard.
+     *
+     * @param string $pattern
+     *
+     * @return bool
+     */
     private static function isAbsolute(string $pattern): bool
     {
         $ix = strpos($pattern, '/');
@@ -132,6 +154,8 @@ final class AutomataMatcher implements RuleMatcher
     }
 
     /**
+     * @inerhitDoc
+     * @Override
      * @param string $path
      * @return Rule|null
      */
@@ -145,6 +169,8 @@ final class AutomataMatcher implements RuleMatcher
     }
 
     /**
+     * Used to return an internal representation of the automata for debugging purposes.
+     *
      * @return array{nodes: array<string, int>, edges: array{from: string, to: string, label: string}[]}
      *
      * @internal

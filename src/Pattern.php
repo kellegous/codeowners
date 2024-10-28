@@ -6,6 +6,9 @@ namespace Kellegous\CodeOwners;
 
 use Closure;
 
+/**
+ * Represents a file pattern part of a rule in a code owners file.
+ */
 final class Pattern
 {
     /**
@@ -13,11 +16,21 @@ final class Pattern
      */
     private string $pattern;
 
+    /**
+     * @param string $pattern
+     */
     private function __construct(string $pattern)
     {
         $this->pattern = $pattern;
     }
 
+    /**
+     * Parse the pattern from a string to a Pattern instance.
+     *
+     * @param string $pattern
+     * @return self
+     * @throws ParseException
+     */
     public static function parse(string $pattern): self
     {
         if (strpos($pattern, '***') !== false || $pattern === '') {
@@ -26,12 +39,19 @@ final class Pattern
         return new self($pattern);
     }
 
+    /**
+     * Get the string representation of the pattern.
+     *
+     * @return string
+     */
     public function toString(): string
     {
         return $this->pattern;
     }
 
     /**
+     * Get a matcher function for the pattern.
+     *
      * @return Closure(string):bool
      */
     public function getMatcher(): Closure
@@ -46,6 +66,12 @@ final class Pattern
         };
     }
 
+    /**
+     * Create a regular expression from a pattern.
+     *
+     * @param string $pattern
+     * @return string
+     */
     private static function toRegexp(string $pattern): string
     {
         if ($pattern === '/') {

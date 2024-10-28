@@ -1,27 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kellegous\CodeOwners\AutomataMatcher;
 
 use InvalidArgumentException;
 
+/**
+ * Represents a state in the NFA.
+ * @Internal
+ */
 final class State
 {
     /**
+     * The index of the rule. We call this priority because we choose the highest
+     * priority state (the last rule) to choose the best match.
+     *
      * @var int
      */
     private int $priority = -1;
 
     /**
+     * The key is a regex pattern for the segment and the value is the next state.
+     *
      * @var array<string, State>
      */
     private array $edges = [];
 
     /**
+     * A recursive state is a special ** state which is one that has a self-referencing
+     * epsilon state.
+     *
      * @var bool
      */
     private bool $isRecursive;
 
     /**
+     * Create a new state. If the state is a terminating ** state, then it will
+     * be considered recursive.
+     *
      * @param bool $isRecursive
      */
     public function __construct(bool $isRecursive = false)
@@ -30,6 +47,8 @@ final class State
     }
 
     /**
+     * Add the states associated with the tokens of a parsed pattern.
+     *
      * @param Token[] $tokens
      * @param int $priority
      * @return void
@@ -65,6 +84,9 @@ final class State
     }
 
     /**
+     * Find the highest priority match for the given path. Note that a return value
+     * of -1 indicates that no match was found.
+     *
      * @param string[] $path
      * @return int
      */
@@ -94,6 +116,8 @@ final class State
     }
 
     /**
+     * Used to return an internal representation of the automata for debugging purposes.
+     *
      * @param array<string, int> $nodes
      * @param array{from:int, to: int, label:string}[] $edges
      * @return void
