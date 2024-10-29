@@ -77,13 +77,13 @@ final class Owners
             $comment = '';
         } else {
             $content = trim(substr($line, 0, $comment_start));
-            $comment = trim(substr($line, $comment_start + 1));
+            $comment = trim(substr($line, $comment_start));
         }
 
         if ($content === '' && $comment === '') {
             return new Blank($sourceInfo);
         } elseif ($content === '' && $comment !== '') {
-            return new Comment($content, $sourceInfo);
+            return new Comment($comment, $sourceInfo);
         }
 
         return Rule::parse(
@@ -125,6 +125,10 @@ final class Owners
         string $content,
         ?string $filename = null
     ): self {
+        if ($content === '') {
+            return new self([]);
+        }
+
         $entries = iterator_to_array(
             self::entriesFrom(
                 explode(PHP_EOL, $content),
