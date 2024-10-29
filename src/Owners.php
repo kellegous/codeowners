@@ -19,7 +19,7 @@ final class Owners
     /**
      * @param Entry[] $entries
      */
-    private function __construct(
+    public function __construct(
         array $entries
     ) {
         $this->entries = $entries;
@@ -162,5 +162,19 @@ final class Owners
     public function getEntries(): iterable
     {
         return $this->entries;
+    }
+
+    /**
+     * @return string
+     */
+    public function toString(): string
+    {
+        return implode(
+                PHP_EOL,
+                array_map(
+                    fn(Entry $entry) => $entry->toString(),
+                    $this->entries
+                )
+            ) . "\n";
     }
 }
