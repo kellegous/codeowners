@@ -41,11 +41,11 @@ $rule = $matcher->match($relative_path);
 
 - [x] Add comments to the structure
 - [x] Complete phpdocs
-- [ ] Add error checking on `match` to normalize or reject impossible patterns (i.e. "" and "/...")
+- [x] Add error checking on `match` to normalize or reject impossible patterns (i.e. "" and "/...")
 - [ ] Explain how `AutomataMatcher` works in this file.
 - [x] Should I support whitespace escaping in patterns?
 - [x] Add ability to turn `Owners` into string.
-- [ ] Test owners entries.
+- [x] Test owners entries.
 - [ ] Test entries to string.
 - [ ] Test pattern escaping.
 - [ ] Test no-owners rules
