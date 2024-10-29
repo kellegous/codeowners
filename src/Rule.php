@@ -53,23 +53,18 @@ final class Rule implements Entry
      *
      * @param string $line
      * @param SourceInfo $sourceInfo
-     * @param string|null $comment
      * @return Rule
      * @throws ParseException
      */
     public static function parse(
         string $line,
-        SourceInfo $sourceInfo,
-        ?string $comment
+        SourceInfo $sourceInfo
     ): Rule {
-        $ix = self::cutAfterPattern($line);
-        if ($ix === -1) {
-            $pattern = $line;
-            $owners = [];
-        } else {
-            $pattern = substr($line, 0, $ix);
-            $owners = preg_split('/\s+/', trim(substr($line, $ix)));
-        }
+        [$pattern, $line] = self::cutAfterPattern($line);
+        [$owners, $comment] = self::cutBeforeComment($line);
+        $owners = $owners !== ''
+            ? preg_split('/\s+/', $owners)
+            : [];
 
         if ($pattern === '' || !is_array($owners)) {
             throw new ParseException(
@@ -86,12 +81,12 @@ final class Rule implements Entry
     }
 
     /**
-     * Finds the end of the pattern in the given line, taking into account escaping characters.
+     * Split the line after the pattern.
      *
      * @param string $line
-     * @return int
+     * @return array{string, string}
      */
-    private static function cutAfterPattern(string $line): int
+    private static function cutAfterPattern(string $line): array
     {
         $escaped = false;
         for ($i = 0, $n = strlen($line); $i < $n; $i++) {
@@ -106,10 +101,25 @@ final class Rule implements Entry
             }
 
             if (ctype_space($c)) {
-                return $i;
+                return [
+                    substr($line, 0, $i),
+                    substr($line, $i)
+                ];
             }
         }
-        return -1;
+        return [$line, ''];
+    }
+
+    /**
+     * @param string $line
+     * @return array{string, string|null}
+     */
+    private static function cutBeforeComment(string $line): array
+    {
+        $ix = strpos($line, '#');
+        return $ix === false
+            ? [trim($line), null]
+            : [trim(substr($line, 0, $ix)), trim(substr($line, $ix))];
     }
 
     /**
