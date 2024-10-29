@@ -46,13 +46,14 @@ $rule = $matcher->match($relative_path);
 - [x] Should I support whitespace escaping in patterns?
 - [x] Add ability to turn `Owners` into string.
 - [x] Test owners entries.
-- [ ] Test entries to string.
+- [x] Test entries to string.
 - [ ] Test pattern escaping.
 - [ ] Test no-owners rules
 - [x] Remove ext-json from requires.
 - [x] Add ext-ctype to requires.
 - [x] Convert json tests to PHP arrays.
 - [ ] Add a command line tool for dot-renderer
+- [ ] Add tests for all entries.
 
 ## Author(s)
 

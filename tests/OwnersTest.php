@@ -91,6 +91,78 @@ class OwnersTest extends TestCase
     }
 
     /**
+     * @return iterable<string, array{Entry[], string}>
+     */
+    public static function getToStringTests(): iterable
+    {
+        yield 'empty' => [
+            [],
+            "\n"
+        ];
+
+        $expected = <<<CODEOWNERS
+            # comment 1
+            # comment 2
+            # comment 3
+            
+            CODEOWNERS;
+
+        yield 'all comments' => [
+            [
+                new Comment('# comment 1', new SourceInfo(1, null)),
+                new Comment('# comment 2', new SourceInfo(2, null)),
+                new Comment('# comment 3', new SourceInfo(3, null)),
+            ],
+            $expected
+        ];
+
+        $expected = <<<CODEOWNERS
+            
+            
+            CODEOWNERS;
+        yield 'a blank' => [
+            [
+                new Blank(new SourceInfo(1, null)),
+            ],
+            $expected
+        ];
+
+        $expected = <<<CODEOWNERS
+            /a/ @a # first rule
+            /b/ @b
+            # comment 1
+            
+            /z
+            
+            CODEOWNERS;
+        yield 'mixed' => [
+            [
+                new Rule(
+                    Pattern::parse('/a/'),
+                    ['@a'],
+                    new SourceInfo(1, null),
+                    '# first rule'
+                ),
+                new Rule(
+                    Pattern::parse('/b/'),
+                    ['@b'],
+                    new SourceInfo(2, null),
+                    null
+                ),
+                new Comment('# comment 1', new SourceInfo(3, null)),
+                new Blank(new SourceInfo(4, null)),
+                new Rule(
+                    Pattern::parse('/z'),
+                    [],
+                    new SourceInfo(5, null),
+                    null
+                ),
+            ],
+            $expected
+        ];
+    }
+
+    /**
      * @param string $owners_file
      * @param Entry[] $expected
      * @return void
@@ -106,6 +178,23 @@ class OwnersTest extends TestCase
         self::assertEquals(
             $expected,
             $owners->getEntries()
+        );
+    }
+
+    /**
+     * @param Entry[] $entries
+     * @param string $expected
+     * @return void
+     * @dataProvider getToStringTests
+     */
+    public function testToString(
+        array $entries,
+        string $expected
+    ): void {
+        $owners = new Owners($entries);
+        self::assertSame(
+            $expected,
+            $owners->toString()
         );
     }
 }
