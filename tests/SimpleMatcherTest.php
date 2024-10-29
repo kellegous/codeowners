@@ -2,7 +2,10 @@
 
 namespace Kellegous\CodeOwners;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
+
+require_once __DIR__ . '/TestProvider.php';
 
 /**
  * @covers SimpleMatcher
@@ -15,30 +18,8 @@ class SimpleMatcherTest extends TestCase
      */
     public static function getMatchTests(): iterable
     {
-        $tests = include __DIR__ . '/matcher_tests.php';
-        foreach ($tests as $desc => ['lines' => $lines, 'expected' => $expected]) {
-            $matcher = self::matcherWith($lines);
-            foreach ($expected as $path => $line) {
-                yield "{$desc} w/ {$path}" => [
-                    $matcher,
-                    $path,
-                    $line
-                ];
-            }
-        }
-    }
-
-    /**
-     * @param string[] $lines
-     * @return SimpleMatcher
-     * @throws ParseException
-     */
-    private static function matcherWith(array $lines): SimpleMatcher
-    {
-        return new SimpleMatcher(
-            Owners::fromString(
-                implode(PHP_EOL, $lines)
-            )->getRules()
+        return TestProvider::forMatchTests(
+            fn(iterable $rules) => new SimpleMatcher($rules)
         );
     }
 
@@ -48,16 +29,19 @@ class SimpleMatcherTest extends TestCase
      */
     public static function getExampleTests(): iterable
     {
-        $owners = Owners::fromFile(__DIR__ . '/CODEOWNERS.example');
-        $matcher = new SimpleMatcher($owners->getRules());
-        $tests = include __DIR__ . '/example_tests.php';
-        foreach ($tests as $path => $line) {
-            yield $path => [
-                $matcher,
-                $path,
-                $line
-            ];
-        }
+        return TestProvider::forExampleTests(
+            fn(iterable $rules) => new SimpleMatcher($rules)
+        );
+    }
+
+    /**
+     * @return iterable<array{SimpleMatcher, string, Exception}>
+     */
+    public static function getBadInputTests(): iterable
+    {
+        return TestProvider::forBadInputTests(
+            fn(iterable $rules) => new SimpleMatcher($rules)
+        );
     }
 
     /**
@@ -98,5 +82,22 @@ class SimpleMatcherTest extends TestCase
             ? $rule->getSourceInfo()->getLineNumber()
             : null;
         self::assertSame($expected_line, $line);
+    }
+
+    /**
+     * @param RuleMatcher $matcher
+     * @param string $path
+     * @param Exception $exception
+     * @return void
+     *
+     * @dataProvider getBadInputTests
+     */
+    public function testBadInput(
+        RuleMatcher $matcher,
+        string $path,
+        Exception $exception
+    ): void {
+        self::expectExceptionObject($exception);
+        $matcher->match($path);
     }
 }

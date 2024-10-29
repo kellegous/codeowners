@@ -35,6 +35,12 @@ final class SimpleMatcher implements RuleMatcher
      */
     public function match(string $path): ?Rule
     {
+        if (str_starts_with($path, '/') || str_ends_with($path, '/')) {
+            throw new \InvalidArgumentException(
+                "path should be a relative path to a file, thus it cannot start or end with a /"
+            );
+        }
+
         foreach ($this->rules as [$matcher, $rule]) {
             if ($matcher($path)) {
                 return $rule;
