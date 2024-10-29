@@ -71,25 +71,16 @@ final class Owners
         string $line,
         SourceInfo $sourceInfo
     ): Entry {
-        $comment_start = strpos($line, '#');
-        if ($comment_start === false) {
-            $content = trim($line);
-            $comment = '';
-        } else {
-            $content = trim(substr($line, 0, $comment_start));
-            $comment = trim(substr($line, $comment_start));
-        }
-
-        if ($content === '' && $comment === '') {
+        $line = trim($line);
+        if ($line === '') {
             return new Blank($sourceInfo);
-        } elseif ($content === '' && $comment !== '') {
-            return new Comment($comment, $sourceInfo);
+        } elseif (str_starts_with($line, '#')) {
+            return new Comment($line, $sourceInfo);
         }
 
         return Rule::parse(
-            $content,
-            $sourceInfo,
-            $comment === '' ? null : $comment
+            $line,
+            $sourceInfo
         );
     }
 
