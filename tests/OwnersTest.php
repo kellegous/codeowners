@@ -79,6 +79,34 @@ class OwnersTest extends TestCase
                 )
             ]
         ];
+
+        yield 'patterns w/ escapes' => [
+            self::fromLines([
+                '/a\\ b/', #escaped space
+                '/z\\\\b/ @a', // escaped backslash
+                '/c\\ / @a # \\ a comment', // escaped space and backslash in comment
+            ]),
+            [
+                new Rule(
+                    Pattern::parse('/a\ b/'),
+                    [],
+                    new SourceInfo(1, null),
+                    null
+                ),
+                new Rule(
+                    Pattern::parse('/z\\\b/'),
+                    ['@a'],
+                    new SourceInfo(2, null),
+                    null
+                ),
+                new Rule(
+                    Pattern::parse('/c\\ /'),
+                    ['@a'],
+                    new SourceInfo(3, null),
+                    '# \\ a comment'
+                )
+            ]
+        ];
     }
 
     /**

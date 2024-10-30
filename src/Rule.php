@@ -91,6 +91,7 @@ final class Rule implements Entry
         $escaped = false;
         for ($i = 0, $n = strlen($line); $i < $n; $i++) {
             if ($escaped) {
+                $escaped = false;
                 continue;
             }
 

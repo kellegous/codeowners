@@ -47,13 +47,13 @@ $rule = $matcher->match($relative_path);
 - [x] Add ability to turn `Owners` into string.
 - [x] Test owners entries.
 - [x] Test entries to string.
-- [ ] Test pattern escaping.
-- [ ] Test no-owners rules
+- [x] Test pattern escaping.
+- [x] Test no-owners rules
 - [x] Remove ext-json from requires.
 - [x] Add ext-ctype to requires.
 - [x] Convert json tests to PHP arrays.
 - [ ] Add a command line tool for dot-renderer
-- [ ] Add tests for all entries.
+- [x] Add tests for all entries.
 
 ## Author(s)
 
