@@ -1,11 +1,11 @@
 # CODEOWNERS
 
 This provides a parser and a set of matchers for
-the [CDOEOWNERS file format](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
+the [CODEOWNERS file format](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
 
 ## Installation
 
-via [composer](https://getcomposer.org/)
+via [Composer](https://getcomposer.org/)
 
 ```bash
 composer require kellegous/codeowners
@@ -27,7 +27,7 @@ $rule = $matcher->match($relative_path);
 
 ### AutomataMatcher
 
-The [AutomatMatcher](src/AutomataMatcher.php) is a more complex implementation of a [RuleMatcher](src/RuleMatcher.php)
+The [AutomataMatcher](src/AutomataMatcher.php) is a more complex implementation of a [RuleMatcher](src/RuleMatcher.php)
 that requires a bit more memory that the `SimpleMatcher` but is able to do matching in `O(log N)` time relative to the
 number of rules in the `CODEOWNERS` file.
 
