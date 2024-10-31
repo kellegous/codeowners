@@ -225,4 +225,12 @@ class OwnersTest extends TestCase
             $owners->toString()
         );
     }
+
+    public function testParseExceptionIsThrownIfCodeOwnersFileDoesNotExist(): void
+    {
+        $this->assertFileDoesNotExist('/this/file/does/not/exist');
+        $this->expectException(ParseException::class);
+
+        Owners::fromFile('/this/file/does/not/exist');
+    }
 }
