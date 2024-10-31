@@ -132,7 +132,7 @@ class OwnersTest extends TestCase
             # comment 1
             # comment 2
             # comment 3
-            
+
             CODEOWNERS;
 
         yield 'all comments' => [
@@ -145,8 +145,8 @@ class OwnersTest extends TestCase
         ];
 
         $expected = <<<CODEOWNERS
-            
-            
+
+
             CODEOWNERS;
         yield 'a blank' => [
             [
@@ -159,9 +159,9 @@ class OwnersTest extends TestCase
             /a/ @a # first rule
             /b/ @b
             # comment 1
-            
+
             /z
-            
+
             CODEOWNERS;
         yield 'mixed' => [
             [
