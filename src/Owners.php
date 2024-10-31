@@ -91,6 +91,10 @@ final class Owners
      */
     private static function readLinesFrom(string $filename): iterable
     {
+        if (!is_readable($filename)) {
+            throw new ParseException("File {$filename} does not exist or is not readable");
+        }
+
         $file = fopen($filename, 'r');
         if ($file === false) {
             throw new ParseException("Failed to open file: {$filename}");
