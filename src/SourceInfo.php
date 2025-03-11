@@ -51,4 +51,26 @@ final class SourceInfo
     {
         return $this->lineNumber;
     }
+
+    /**
+     * @return array{filename: ?string, lineNumber: int}
+     */
+    public function __serialize(): array
+    {
+        return [
+            'filename' => $this->filename,
+            'lineNumber' => $this->lineNumber,
+        ];
+    }
+
+    /**
+     * @param array{filename: ?string, lineNumber: int} $data
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->filename = $data['filename'];
+        $this->lineNumber = $data['lineNumber'];
+    }
 }

@@ -51,28 +51,9 @@ class SimpleMatcherTest extends TestCase
      * @return void
      *
      * @dataProvider getMatchTests
-     */
-    public function testMatch(
-        SimpleMatcher $matcher,
-        string $path,
-        ?int $expected_line
-    ): void {
-        $rule = $matcher->match($path);
-        $line = $rule !== null
-            ? $rule->getSourceInfo()->getLineNumber()
-            : null;
-        self::assertSame($expected_line, $line);
-    }
-
-    /**
-     * @param SimpleMatcher $matcher
-     * @param string $path
-     * @param int|null $expected_line
-     * @return void
-     *
      * @dataProvider getExampleTests
      */
-    public function testExampleMatch(
+    public function testMatch(
         SimpleMatcher $matcher,
         string $path,
         ?int $expected_line
