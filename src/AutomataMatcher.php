@@ -205,4 +205,26 @@ final class AutomataMatcher implements RuleMatcher
         );
         return ['nodes' => $nodes, 'edges' => $edges];
     }
+
+    /**
+     * @return array{rules: array<Rule>, start: State}
+     */
+    public function __serialize(): array
+    {
+        return [
+            'rules' => $this->rules,
+            'start' => $this->start,
+        ];
+    }
+
+    /**
+     * @param array{rules: array<Rule>, start: State} $data
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->rules = $data['rules'];
+        $this->start = $data['start'];
+    }
 }

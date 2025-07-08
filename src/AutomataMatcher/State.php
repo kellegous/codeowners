@@ -145,4 +145,28 @@ final class State
             ];
         }
     }
+
+    /**
+     * @return array{priority: int, edges: array<string, State>, isRecursive: bool}
+     */
+    public function __serialize(): array
+    {
+        return [
+            'priority' => $this->priority,
+            'edges' => $this->edges,
+            'isRecursive' => $this->isRecursive,
+        ];
+    }
+
+    /**
+     * @param array{priority: int, edges: array<string, State>, isRecursive: bool} $data
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->priority = $data['priority'];
+        $this->edges = $data['edges'];
+        $this->isRecursive = $data['isRecursive'];
+    }
 }

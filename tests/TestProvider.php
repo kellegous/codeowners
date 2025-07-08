@@ -25,7 +25,8 @@ final class TestProvider
      * @throws ParseException
      */
     public static function forMatchTests(
-        Closure $create_matcher
+        Closure $create_matcher,
+        string $unique_identifier = ""
     ): iterable {
         $tests = include __DIR__ . '/matcher_tests.php';
         foreach ($tests as $desc => ['lines' => $lines, 'expected' => $expected]) {
@@ -33,8 +34,12 @@ final class TestProvider
                 implode(PHP_EOL, $lines)
             )->getRules();
             $matcher = $create_matcher($rules);
+            if ($unique_identifier !== "") {
+                $unique_identifier = "{$unique_identifier}: ";
+            }
+
             foreach ($expected as $path => $line) {
-                yield "{$desc} w/ {$path}" => [
+                yield "{$unique_identifier}{$desc} w/ {$path}" => [
                     $matcher,
                     $path,
                     $line
@@ -50,13 +55,18 @@ final class TestProvider
      * @throws ParseException
      */
     public static function forExampleTests(
-        Closure $create_matcher
+        Closure $create_matcher,
+        string $unique_identifier = ""
     ): iterable {
         $owners = Owners::fromFile(__DIR__ . '/CODEOWNERS.example');
         $matcher = $create_matcher($owners->getRules());
         $tests = include __DIR__ . '/example_tests.php';
+        if ($unique_identifier !== "") {
+            $unique_identifier = "{$unique_identifier}: ";
+        }
+
         foreach ($tests as $path => $line) {
-            yield $path => [
+            yield "{$unique_identifier}{$path}" => [
                 $matcher,
                 $path,
                 $line
@@ -70,17 +80,22 @@ final class TestProvider
      * @return iterable<array{T, string, Exception}>
      */
     public static function forBadInputTests(
-        Closure $create_matcher
+        Closure $create_matcher,
+        string $unique_identifier = ""
     ): iterable {
         $matcher = $create_matcher([]);
-        yield 'leading /' => [
+        if ($unique_identifier !== "") {
+            $unique_identifier = "{$unique_identifier}: ";
+        }
+
+        yield "{$unique_identifier}leading /" => [
             $matcher,
             '/foo/bar',
             new InvalidArgumentException(
                 "path should be a relative path to a file, thus it cannot start or end with a /"
             )
         ];
-        yield 'trailing /' => [
+        yield "{$unique_identifier}trailing /" => [
             $matcher,
             'foo/bar/',
             new InvalidArgumentException(

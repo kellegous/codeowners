@@ -157,4 +157,24 @@ final class Pattern
         $buffer .= '\Z';
         return "#$buffer#";
     }
+
+    /**
+     * @return array{pattern: string}
+     */
+    public function __serialize(): array
+    {
+        return [
+            'pattern' => $this->pattern,
+        ];
+    }
+
+    /**
+     * @param array{pattern: string} $data
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->pattern = $data['pattern'];
+    }
 }

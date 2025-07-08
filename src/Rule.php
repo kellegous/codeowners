@@ -180,4 +180,30 @@ final class Rule implements Entry
 
         return $line;
     }
+
+    /**
+     * @return array{pattern: Pattern, owners: array<string>, sourceInfo: SourceInfo, comment: ?string}
+     */
+    public function __serialize(): array
+    {
+        return [
+            'pattern' => $this->pattern,
+            'owners' => $this->owners,
+            'sourceInfo' => $this->sourceInfo,
+            'comment' => $this->comment,
+        ];
+    }
+
+    /**
+     * @param array{pattern: Pattern, owners: array<string>, sourceInfo: SourceInfo, comment: ?string} $data
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->pattern = $data['pattern'];
+        $this->owners = $data['owners'];
+        $this->sourceInfo = $data['sourceInfo'];
+        $this->comment = $data['comment'];
+    }
 }
